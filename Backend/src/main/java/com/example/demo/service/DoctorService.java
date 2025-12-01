@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.doctor.DoctorRequestDto;
 import com.example.demo.model.Doctor;
 import com.example.demo.repository.DoctorRepository;
 import org.springframework.stereotype.Service;
@@ -28,10 +29,10 @@ public class DoctorService {
         return repository.save(doctor);
     }
 
-    public Doctor update(Long id, Doctor updated) {
+    public Doctor update(Long id, DoctorRequestDto dto) {
         return repository.findById(id).map(existing -> {
-            existing.setFirstName(updated.getFirstName());
-            existing.setLastName(updated.getLastName());
+            existing.setFirstName(dto.getFirstName());
+            existing.setLastName(dto.getLastName());
             return repository.save(existing);
         }).orElseThrow(() -> new RuntimeException("Doctor not found"));
     }
