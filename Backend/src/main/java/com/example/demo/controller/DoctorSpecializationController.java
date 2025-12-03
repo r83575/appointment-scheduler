@@ -1,40 +1,54 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.DoctorSpecialization;
+import com.example.demo.dto.doctorspecialization.*;
 import com.example.demo.service.DoctorSpecializationService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/doctorSpecializations")
+@RequestMapping("/api/doctor-specializations")
+@RequiredArgsConstructor
 public class DoctorSpecializationController {
 
     private final DoctorSpecializationService service;
 
-    public DoctorSpecializationController(DoctorSpecializationService service) {
-        this.service = service;
-    }
-
+    // GET ALL
     @GetMapping
-    public List<DoctorSpecialization> getAll() {
+    public List<DoctorSpecializationResponseDto> getAll() {
         return service.getAll();
     }
 
     @GetMapping("/{doctorId}/{specializationId}")
-    public DoctorSpecialization getById(@PathVariable Long doctorId,
-                                        @PathVariable Long specializationId) {
-        return service.getById(doctorId, specializationId).orElse(null);
+    public DoctorSpecializationResponseDto getById(
+            @PathVariable Long doctorId,
+            @PathVariable Long specializationId
+    ) {
+        return service.getById(doctorId, specializationId);
     }
 
     @PostMapping
-    public DoctorSpecialization create(@RequestBody DoctorSpecialization doctorSpecialization) {
-        return service.save(doctorSpecialization);
+    public DoctorSpecializationResponseDto create(
+            @RequestBody DoctorSpecializationRequestDto dto
+    ) {
+        return service.create(dto);
+    }
+
+    @PutMapping("/{doctorId}/{specializationId}")
+    public DoctorSpecializationResponseDto update(
+            @PathVariable Long doctorId,
+            @PathVariable Long specializationId,
+            @RequestBody DoctorSpecializationRequestDto dto
+    ) {
+        return service.update(doctorId, specializationId, dto);
     }
 
     @DeleteMapping("/{doctorId}/{specializationId}")
-    public void delete(@PathVariable Long doctorId,
-                       @PathVariable Long specializationId) {
+    public void delete(
+            @PathVariable Long doctorId,
+            @PathVariable Long specializationId
+    ) {
         service.delete(doctorId, specializationId);
     }
 }

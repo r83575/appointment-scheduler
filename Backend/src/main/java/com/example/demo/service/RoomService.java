@@ -1,40 +1,47 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.room.RoomRequestDto;
+import com.example.demo.dto.room.RoomResponseDto;
+import com.example.demo.mapper.RoomMapper;
 import com.example.demo.model.Room;
 import com.example.demo.repository.RoomRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class RoomService {
 
     private final RoomRepository repository;
 
-    public RoomService(RoomRepository repository) {
-        this.repository = repository;
+    public List<RoomResponseDto> getAll() {
+        return repository.findAll().stream()
+                .map(RoomMapper::toDto)
+                .collect(Collectors.toList());
     }
 
-    public List<Room> getAll() {
-        return repository.findAll();
+    public RoomResponseDto getById(Long id) {
+        return repository.findById(id)
+                .map(RoomMapper::toDto)
+                .orElse(null);
     }
 
-    public Optional<Room> getById(Long id) {
-        return repository.findById(id);
+    public RoomResponseDto create(RoomRequestDto dto) {
+        Room entity = RoomMapper.toEntity(dto);
+        Room saved = repository.save(entity);
+        return RoomMapper.toDto(saved);
     }
 
-    public Room save(Room room) {
-        return repository.save(room);
-    }
-
-    public Room update(Long id, Room updated) {
-        return repository.findById(id).map(existing -> {
-            existing.setRoomNumber(updated.getRoomNumber());
-            existing.setLocation(updated.getLocation());
-            existing.setActive(updated.isActive());
-            return repository.save(existing);
-        }).orElseThrow(() -> new RuntimeException("Room not found"));
+    public RoomResponseDto update(Long id, RoomRequestDto dto) {
+        return repository.findById(id)
+                .map(existing -> {
+                    RoomMapper.updateEntity(existing, dto);
+                    return RoomMapper.toDto(repository.save(existing));
+                })
+                .orElseThrow(() -> new RuntimeException("Room not found"));
     }
 
     public void delete(Long id) {

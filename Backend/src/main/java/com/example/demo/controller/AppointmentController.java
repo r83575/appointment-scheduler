@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.Appointment;
+import com.example.demo.dto.appointment.AppointmentRequestDto;
+import com.example.demo.dto.appointment.AppointmentResponseDto;
 import com.example.demo.service.AppointmentService;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,23 +18,26 @@ public class AppointmentController {
     }
 
     @GetMapping
-    public List<Appointment> getAll() {
+    public List<AppointmentResponseDto> getAll() {
         return service.getAll();
     }
 
     @GetMapping("/{id}")
-    public Appointment getById(@PathVariable Long id) {
-        return service.getById(id).orElse(null);
+    public AppointmentResponseDto getById(@PathVariable Long id) {
+        return service.getById(id);
     }
 
     @PostMapping
-    public Appointment create(@RequestBody Appointment appointment) {
-        return service.save(appointment);
+    public AppointmentResponseDto create(@RequestBody AppointmentRequestDto dto) {
+        return service.create(dto);
     }
 
     @PutMapping("/{id}")
-    public Appointment update(@PathVariable Long id, @RequestBody Appointment updated) {
-        return service.update(id, updated);
+    public AppointmentResponseDto update(
+            @PathVariable Long id,
+            @RequestBody AppointmentRequestDto dto
+    ) {
+        return service.update(id, dto);
     }
 
     @DeleteMapping("/{id}")

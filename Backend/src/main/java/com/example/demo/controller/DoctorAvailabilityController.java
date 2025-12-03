@@ -1,41 +1,50 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.DoctorAvailability;
+import com.example.demo.dto.availability.DoctorAvailabilityRequestDto;
+import com.example.demo.dto.availability.DoctorAvailabilityResponseDto;
 import com.example.demo.service.DoctorAvailabilityService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/doctorAvailability")
+@RequestMapping("/api/doctor-availability")
+@RequiredArgsConstructor
 public class DoctorAvailabilityController {
 
     private final DoctorAvailabilityService service;
 
-    public DoctorAvailabilityController(DoctorAvailabilityService service) {
-        this.service = service;
-    }
-
+    // GET ALL
     @GetMapping
-    public List<DoctorAvailability> getAll() {
+    public List<DoctorAvailabilityResponseDto> getAll() {
         return service.getAll();
     }
 
+    // GET BY ID
     @GetMapping("/{id}")
-    public DoctorAvailability getById(@PathVariable Long id) {
-        return service.getById(id).orElse(null);
+    public DoctorAvailabilityResponseDto getById(@PathVariable Long id) {
+        return service.getById(id);
     }
 
+    // CREATE
     @PostMapping
-    public DoctorAvailability create(@RequestBody DoctorAvailability doctorAvailability) {
-        return service.save(doctorAvailability);
+    public DoctorAvailabilityResponseDto create(
+            @RequestBody DoctorAvailabilityRequestDto dto
+    ) {
+        return service.create(dto);
     }
 
+    // UPDATE
     @PutMapping("/{id}")
-    public DoctorAvailability update(@PathVariable Long id, @RequestBody DoctorAvailability updated) {
-        return service.update(id, updated);
+    public DoctorAvailabilityResponseDto update(
+            @PathVariable Long id,
+            @RequestBody DoctorAvailabilityRequestDto dto
+    ) {
+        return service.update(id, dto);
     }
 
+    // DELETE
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
         service.delete(id);

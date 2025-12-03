@@ -1,10 +1,14 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.doctor.DoctorRequestDto;
+import com.example.demo.dto.doctor.DoctorResponseDto;
+import com.example.demo.mapper.DoctorMapper;
 import com.example.demo.model.Doctor;
 import com.example.demo.service.DoctorService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/doctors")
@@ -17,23 +21,35 @@ public class DoctorController {
     }
 
     @GetMapping
-    public List<Doctor> getAll() {
-        return service.getAll();
+    public List<DoctorResponseDto> getAll() {
+        return service.getAll()
+                .stream()
+                .map(DoctorMapper::toDto)
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
-    public Doctor getById(@PathVariable Long id) {
-        return service.getById(id).orElse(null);
+    public DoctorResponseDto getById(@PathVariable Long id) {
+        return service.getById(id)
+                .map(DoctorMapper::toDto)
+                .orElse(null);
     }
 
     @PostMapping
-    public Doctor create(@RequestBody Doctor doctor) {
-        return service.save(doctor);
+    public DoctorResponseDto create(@RequestBody DoctorRequestDto dto) {
+        Doctor doctor = DoctorMapper.toEntity(dto);
+        Doctor saved = service.save(doctor);
+        return DoctorMapper.toDto(saved);
     }
 
     @PutMapping("/{id}")
-    public Doctor update(@PathVariable Long id, @RequestBody Doctor updated) {
-        return service.update(id, updated);
+    public DoctorResponseDto update(
+            @PathVariable Long id,
+            @RequestBody DoctorRequestDto dto
+    ) {
+        Doctor updatedEntity = DoctorMapper.toEntity(dto);
+        Doctor saved = service.update(id, updatedEntity);
+        return DoctorMapper.toDto(saved);
     }
 
     @DeleteMapping("/{id}")

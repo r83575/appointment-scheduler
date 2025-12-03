@@ -1,46 +1,50 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.customer.CustomerRequestDto;
+import com.example.demo.dto.customer.CustomerResponseDto;
+import com.example.demo.mapper.CustomerMapper;
 import com.example.demo.model.Customer;
 import com.example.demo.repository.CustomerRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class CustomerService {
 
     private final CustomerRepository repository;
 
-    public CustomerService(CustomerRepository repository) {
-        this.repository = repository;
+    public List<CustomerResponseDto> getAll() {
+        return repository.findAll()
+                .stream()
+                .map(CustomerMapper::toDto)
+                .toList();
     }
 
-    public List<Customer> getAll() {
-        return repository.findAll();
+    public CustomerResponseDto getById(Long id) {
+        Customer entity = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Customer not found"));
+
+        return CustomerMapper.toDto(entity);
     }
 
-    public Optional<Customer> getById(Long id) {
-        return repository.findById(id);
+    public CustomerResponseDto create(CustomerRequestDto dto) {
+        Customer entity = CustomerMapper.toEntity(dto);
+        Customer saved = repository.save(entity);
+        return CustomerMapper.toDto(saved);
     }
 
-    public Customer save(Customer customer) {
-        return repository.save(customer);
-    }
+    public CustomerResponseDto update(Long id, CustomerRequestDto dto) {
+        Customer existing = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Customer not found"));
 
-    public Customer update(Long id, Customer updated) {
-        return repository.findById(id).map(existing -> {
-            existing.setFirstName(updated.getFirstName());
-            existing.setLastName(updated.getLastName());
-            existing.setIdentifier(updated.getIdentifier());
-            existing.setEmail(updated.getEmail());
-            existing.setPhoneNumber(updated.getPhoneNumber());
-            existing.setAnotherPhoneNumber(updated.getAnotherPhoneNumber());
-            existing.setAddress(updated.getAddress());
-            existing.setCity(updated.getCity());
-            existing.setPassword(updated.getPassword());
-            return repository.save(existing);
-        }).orElseThrow(() -> new RuntimeException("Customer not found"));
+        CustomerMapper.updateEntity(existing, dto);
+
+        Customer updated = repository.save(existing);
+
+        return CustomerMapper.toDto(updated);
     }
 
     public void delete(Long id) {
