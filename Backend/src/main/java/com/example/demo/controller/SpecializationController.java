@@ -1,39 +1,41 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.Specialization;
+import com.example.demo.dto.specialization.SpecializationRequestDto;
+import com.example.demo.dto.specialization.SpecializationResponseDto;
 import com.example.demo.service.SpecializationService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/specializations")
+@RequiredArgsConstructor
 public class SpecializationController {
 
     private final SpecializationService service;
 
-    public SpecializationController(SpecializationService service) {
-        this.service = service;
-    }
-
     @GetMapping
-    public List<Specialization> getAll() {
+    public List<SpecializationResponseDto> getAll() {
         return service.getAll();
     }
 
     @GetMapping("/{id}")
-    public Specialization getById(@PathVariable Long id) {
-        return service.getById(id).orElse(null);
+    public SpecializationResponseDto getById(@PathVariable Long id) {
+        return service.getById(id);
     }
 
     @PostMapping
-    public Specialization create(@RequestBody Specialization specialization) {
-        return service.save(specialization);
+    public SpecializationResponseDto create(@RequestBody SpecializationRequestDto dto) {
+        return service.create(dto);
     }
 
     @PutMapping("/{id}")
-    public Specialization update(@PathVariable Long id, @RequestBody Specialization updated) {
-        return service.update(id, updated);
+    public SpecializationResponseDto update(
+            @PathVariable Long id,
+            @RequestBody SpecializationRequestDto dto
+    ) {
+        return service.update(id, dto);
     }
 
     @DeleteMapping("/{id}")
