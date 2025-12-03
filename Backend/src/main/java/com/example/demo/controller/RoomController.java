@@ -1,39 +1,38 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.Room;
+import com.example.demo.dto.room.RoomRequestDto;
+import com.example.demo.dto.room.RoomResponseDto;
 import com.example.demo.service.RoomService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/rooms")
+@RequiredArgsConstructor
 public class RoomController {
 
     private final RoomService service;
 
-    public RoomController(RoomService service) {
-        this.service = service;
-    }
-
     @GetMapping
-    public List<Room> getAll() {
+    public List<RoomResponseDto> getAll() {
         return service.getAll();
     }
 
     @GetMapping("/{id}")
-    public Room getById(@PathVariable Long id) {
-        return service.getById(id).orElse(null);
+    public RoomResponseDto getById(@PathVariable Long id) {
+        return service.getById(id);
     }
 
     @PostMapping
-    public Room create(@RequestBody Room room) {
-        return service.save(room);
+    public RoomResponseDto create(@RequestBody RoomRequestDto dto) {
+        return service.create(dto);
     }
 
     @PutMapping("/{id}")
-    public Room update(@PathVariable Long id, @RequestBody Room updated) {
-        return service.update(id, updated);
+    public RoomResponseDto update(@PathVariable Long id, @RequestBody RoomRequestDto dto) {
+        return service.update(id, dto);
     }
 
     @DeleteMapping("/{id}")
