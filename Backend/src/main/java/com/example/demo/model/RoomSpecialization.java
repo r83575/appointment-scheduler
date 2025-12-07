@@ -20,12 +20,10 @@ public class RoomSpecialization {
     private Long specializationId;
 
     @ManyToOne
-    @MapsId("roomId")
     @JoinColumn(name = "room_id", insertable = false, updatable = false)
     private Room  room;
 
     @ManyToOne
-    @MapsId("specializationId")
     @JoinColumn(name = "specialization_id", insertable = false, updatable = false)
     private Specialization specialization;
 }
