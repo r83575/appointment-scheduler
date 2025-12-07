@@ -2,8 +2,8 @@ package com.example.demo.dto.customer;
 
 import jakarta.validation.constraints.*;
 import lombok.Data;
-import com.example.demo.validation.ValidIsraeliId;
-import com.example.demo.validation.StrongPassword;
+import com.example.demo.validation.IsraeliIdValid;
+import com.example.demo.validation.StrongPasswordValid;
 import com.example.demo.validation.PhoneNumbersValid;
 
 @PhoneNumbersValid
@@ -16,7 +16,7 @@ public class CustomerRequestDto {
     @NotBlank(message = "lastName is required")
     private String lastName;
 
-    @ValidIsraeliId(message = "identifier is not a valid Israeli ID")
+    @IsraeliIdValid(message = "identifier is not a valid Israeli ID")
     @NotBlank(message = "identifier is required")
     private String identifier;
 
@@ -37,6 +37,6 @@ public class CustomerRequestDto {
     private String city;
 
     @NotBlank(message = "password is required")
-    @StrongPassword(message = "password is not strong enough")
+    @StrongPasswordValid(message = "password is not strong enough")
     private String password;
 }

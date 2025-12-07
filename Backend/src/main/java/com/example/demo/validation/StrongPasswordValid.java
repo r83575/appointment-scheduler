@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = StrongPasswordValidator.class)
-public @interface StrongPassword {
+public @interface StrongPasswordValid {
     String message() default "password is not strong enough";
 
     Class<?>[] groups() default {};

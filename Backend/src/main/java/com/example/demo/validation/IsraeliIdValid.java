@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = IsraeliIdValidator.class)
-public @interface ValidIsraeliId {
+public @interface IsraeliIdValid {
     String message() default "invalid Israeli ID number";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};

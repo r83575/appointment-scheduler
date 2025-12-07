@@ -1,10 +1,9 @@
 package com.example.demo.validation;
 
-import com.example.demo.validation.ValidIsraeliId;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-public class IsraeliIdValidator implements ConstraintValidator<ValidIsraeliId, String> {
+public class IsraeliIdValidator implements ConstraintValidator<IsraeliIdValid, String> {
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {

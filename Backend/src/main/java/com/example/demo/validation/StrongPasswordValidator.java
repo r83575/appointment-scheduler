@@ -3,7 +3,7 @@ package com.example.demo.validation;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-public class StrongPasswordValidator implements ConstraintValidator<StrongPassword, String> {
+public class StrongPasswordValidator implements ConstraintValidator<StrongPasswordValid, String> {
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
