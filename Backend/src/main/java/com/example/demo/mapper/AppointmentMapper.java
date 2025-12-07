@@ -5,6 +5,8 @@ import com.example.demo.dto.appointment.AppointmentResponseDto;
 import com.example.demo.model.*;
 import com.example.demo.model.enums.AppointmentStatus;
 
+import java.time.LocalTime;
+
 public class AppointmentMapper {
 
     public static Appointment toEntity(
@@ -12,7 +14,8 @@ public class AppointmentMapper {
             Doctor doctor,
             Customer customer,
             Room room,
-            Specialization specialization
+            Specialization specialization,
+            LocalTime endTime
     ) {
         return Appointment.builder()
                 .doctor(doctor)
@@ -21,10 +24,11 @@ public class AppointmentMapper {
                 .specialization(specialization)
                 .date(dto.getDate())
                 .startTime(dto.getStartTime())
-                .endTime(dto.getEndTime())
+                .endTime(endTime) // ← שימוש בפרמטר שחישבת
                 .status(AppointmentStatus.CANCELLED)
                 .build();
     }
+
 
     public static AppointmentResponseDto toDto(Appointment entity) {
         AppointmentResponseDto dto = new AppointmentResponseDto();
