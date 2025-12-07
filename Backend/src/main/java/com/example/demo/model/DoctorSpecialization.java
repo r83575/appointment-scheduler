@@ -20,12 +20,10 @@ public class DoctorSpecialization {
     private Long specializationId;
 
     @ManyToOne
-    @MapsId("doctorId")
     @JoinColumn(name = "doctor_id", insertable = false, updatable = false)
     private Doctor doctor;
 
     @ManyToOne
-    @MapsId("specializationId")
     @JoinColumn(name = "specialization_id", insertable = false, updatable = false)
     private Specialization specialization;
 }
