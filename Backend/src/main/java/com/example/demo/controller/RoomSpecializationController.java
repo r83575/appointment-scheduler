@@ -4,6 +4,7 @@ import com.example.demo.dto.roomspecialization.*;
 import com.example.demo.mapper.RoomSpecializationMapper;
 import com.example.demo.model.RoomSpecialization;
 import com.example.demo.service.RoomSpecializationService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,7 +34,7 @@ public class RoomSpecializationController {
     }
 
     @PostMapping
-    public RoomSpecializationResponseDto create(@RequestBody RoomSpecializationRequestDto requestDto) {
+    public RoomSpecializationResponseDto create(@RequestBody @Valid RoomSpecializationRequestDto requestDto) {
         RoomSpecialization entity = RoomSpecializationMapper.toEntity(requestDto);
         RoomSpecialization saved = service.save(entity);
         return RoomSpecializationMapper.toDto(saved);
