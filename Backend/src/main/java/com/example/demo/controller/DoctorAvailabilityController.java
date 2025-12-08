@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.dto.availability.DoctorAvailabilityRequestDto;
 import com.example.demo.dto.availability.DoctorAvailabilityResponseDto;
 import com.example.demo.service.DoctorAvailabilityService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,7 +31,7 @@ public class DoctorAvailabilityController {
     // CREATE
     @PostMapping
     public DoctorAvailabilityResponseDto create(
-            @RequestBody DoctorAvailabilityRequestDto dto
+            @RequestBody @Valid DoctorAvailabilityRequestDto dto
     ) {
         return service.create(dto);
     }

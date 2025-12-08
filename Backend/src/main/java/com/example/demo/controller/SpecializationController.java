@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.dto.specialization.SpecializationRequestDto;
 import com.example.demo.dto.specialization.SpecializationResponseDto;
 import com.example.demo.service.SpecializationService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +27,7 @@ public class SpecializationController {
     }
 
     @PostMapping
-    public SpecializationResponseDto create(@RequestBody SpecializationRequestDto dto) {
+    public SpecializationResponseDto create(@RequestBody @Valid SpecializationRequestDto dto) {
         return service.create(dto);
     }
 

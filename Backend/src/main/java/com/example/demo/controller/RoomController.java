@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.dto.room.RoomRequestDto;
 import com.example.demo.dto.room.RoomResponseDto;
 import com.example.demo.service.RoomService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,12 +27,12 @@ public class RoomController {
     }
 
     @PostMapping
-    public RoomResponseDto create(@RequestBody RoomRequestDto dto) {
+    public RoomResponseDto create(@Valid @RequestBody RoomRequestDto dto) {
         return service.create(dto);
     }
 
     @PutMapping("/{id}")
-    public RoomResponseDto update(@PathVariable Long id, @RequestBody RoomRequestDto dto) {
+    public RoomResponseDto update(@PathVariable Long id, @Valid  @RequestBody RoomRequestDto dto) {
         return service.update(id, dto);
     }
 

@@ -30,16 +30,30 @@ public class RoomService {
     }
 
     public RoomResponseDto create(RoomRequestDto dto) {
+
+        if (repository.existsByRoomNumber(dto.getRoomNumber())) {
+            throw new RuntimeException("Room number already exists");
+        }
+
         Room entity = RoomMapper.toEntity(dto);
         Room saved = repository.save(entity);
         return RoomMapper.toDto(saved);
     }
 
     public RoomResponseDto update(Long id, RoomRequestDto dto) {
+
         return repository.findById(id)
                 .map(existing -> {
+
+                    // אם המשתמש משנה את מספר החדר — צריך לבדוק שלא קיים
+                    if (existing.getRoomNumber() != dto.getRoomNumber() &&
+                            repository.existsByRoomNumber(dto.getRoomNumber())) {
+                        throw new RuntimeException("Room number already exists");
+                    }
+
                     RoomMapper.updateEntity(existing, dto);
-                    return RoomMapper.toDto(repository.save(existing));
+                    Room updated = repository.save(existing);
+                    return RoomMapper.toDto(updated);
                 })
                 .orElseThrow(() -> new RuntimeException("Room not found"));
     }

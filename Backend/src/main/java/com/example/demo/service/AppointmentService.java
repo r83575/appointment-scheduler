@@ -7,6 +7,7 @@ import com.example.demo.model.*;
 import com.example.demo.repository.*;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -32,7 +33,6 @@ public class AppointmentService {
         this.specializationRepo = specializationRepo;
     }
 
-    // ---------------- CREATE ----------------
     public AppointmentResponseDto create(AppointmentRequestDto dto) {
 
         Doctor doctor = doctorRepo.findById(dto.getDoctorId())
@@ -47,14 +47,17 @@ public class AppointmentService {
         Specialization specialization = specializationRepo.findById(dto.getSpecializationId())
                 .orElseThrow(() -> new RuntimeException("Specialization not found"));
 
-        Appointment entity = AppointmentMapper.toEntity(dto, doctor, customer, room, specialization);
+        int duration = specialization.getDefaultDuration();
+        var calculatedEndTime = dto.getStartTime().plusMinutes(duration);
+
+        Appointment entity = AppointmentMapper.toEntity(dto, doctor, customer, room, specialization, calculatedEndTime);
 
         Appointment saved = appointmentRepo.save(entity);
 
         return AppointmentMapper.toDto(saved);
     }
 
-    // ---------------- GET ALL ----------------
+
     public List<AppointmentResponseDto> getAll() {
         return appointmentRepo.findAll()
                 .stream()
@@ -62,7 +65,6 @@ public class AppointmentService {
                 .toList();
     }
 
-    // ---------------- GET BY ID ----------------
     public AppointmentResponseDto getById(Long id) {
         Appointment entity = appointmentRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Appointment not found"));
@@ -70,7 +72,6 @@ public class AppointmentService {
         return AppointmentMapper.toDto(entity);
     }
 
-    // ---------------- UPDATE ----------------
     public AppointmentResponseDto update(Long id, AppointmentRequestDto dto) {
 
         Appointment existing = appointmentRepo.findById(id)
@@ -94,14 +95,15 @@ public class AppointmentService {
         existing.setSpecialization(specialization);
         existing.setDate(dto.getDate());
         existing.setStartTime(dto.getStartTime());
-        existing.setEndTime(dto.getEndTime());
+        int duration = specialization.getDefaultDuration();
+        LocalTime calculatedEndTime = dto.getStartTime().plusMinutes(duration);
+        existing.setEndTime(calculatedEndTime);
 
         Appointment updated = appointmentRepo.save(existing);
 
         return AppointmentMapper.toDto(updated);
     }
 
-    // ---------------- DELETE ----------------
     public void delete(Long id) {
         appointmentRepo.deleteById(id);
     }

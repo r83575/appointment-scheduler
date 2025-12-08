@@ -24,6 +24,15 @@ public class RoomSpecializationService {
     }
 
     public RoomSpecialization save(RoomSpecialization entity) {
+        RoomSpecializationId id = new RoomSpecializationId(
+                entity.getRoom().getId(),
+                entity.getSpecialization().getId()
+        );
+
+        if (repository.existsById(id)) {
+            throw new RuntimeException("This RoomSpecialization already exists");
+        }
+
         return repository.save(entity);
     }
 

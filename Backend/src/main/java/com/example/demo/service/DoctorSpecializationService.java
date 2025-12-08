@@ -33,6 +33,14 @@ public class DoctorSpecializationService {
     }
 
     public DoctorSpecializationResponseDto create(DoctorSpecializationRequestDto dto) {
+
+        DoctorSpecializationId id =
+                new DoctorSpecializationId(dto.getDoctorId(), dto.getSpecializationId());
+
+        if (repository.existsById(id)) {
+            throw new RuntimeException("This doctor is already assigned to this specialization");
+        }
+
         DoctorSpecialization entity = DoctorSpecializationMapper.toEntity(dto);
         DoctorSpecialization saved = repository.save(entity);
 
@@ -47,12 +55,20 @@ public class DoctorSpecializationService {
         DoctorSpecialization existing = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("DoctorSpecialization not found"));
 
+        DoctorSpecializationId newId =
+                new DoctorSpecializationId(dto.getDoctorId(), dto.getSpecializationId());
+
+        if (!newId.equals(id) && repository.existsById(newId)) {
+            throw new RuntimeException("This doctor is already assigned to this specialization");
+        }
+
         DoctorSpecializationMapper.updateEntity(existing, dto);
 
         DoctorSpecialization updated = repository.save(existing);
 
         return DoctorSpecializationMapper.toDto(updated);
     }
+
 
     public void delete(Long doctorId, Long specializationId) {
         DoctorSpecializationId id = new DoctorSpecializationId(doctorId, specializationId);
