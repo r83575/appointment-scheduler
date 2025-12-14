@@ -7,10 +7,12 @@ import com.example.demo.model.DoctorSpecializationId;
 import com.example.demo.repository.DoctorSpecializationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class DoctorSpecializationService {
 

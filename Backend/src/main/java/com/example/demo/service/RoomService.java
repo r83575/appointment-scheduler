@@ -7,9 +7,9 @@ import com.example.demo.model.Room;
 import com.example.demo.repository.RoomRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -20,15 +20,17 @@ public class RoomService {
     public List<RoomResponseDto> getAll() {
         return repository.findAll().stream()
                 .map(RoomMapper::toDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public RoomResponseDto getById(Long id) {
-        return repository.findById(id)
-                .map(RoomMapper::toDto)
-                .orElse(null);
+        Room entity = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Room not found"));
+
+        return RoomMapper.toDto(entity);
     }
 
+    @Transactional
     public RoomResponseDto create(RoomRequestDto dto) {
 
         if (repository.existsByRoomNumber(dto.getRoomNumber())) {
@@ -40,12 +42,12 @@ public class RoomService {
         return RoomMapper.toDto(saved);
     }
 
+    @Transactional
     public RoomResponseDto update(Long id, RoomRequestDto dto) {
 
         return repository.findById(id)
                 .map(existing -> {
 
-                    // אם המשתמש משנה את מספר החדר — צריך לבדוק שלא קיים
                     if (existing.getRoomNumber() != dto.getRoomNumber() &&
                             repository.existsByRoomNumber(dto.getRoomNumber())) {
                         throw new RuntimeException("Room number already exists");
@@ -58,6 +60,7 @@ public class RoomService {
                 .orElseThrow(() -> new RuntimeException("Room not found"));
     }
 
+    @Transactional
     public void delete(Long id) {
         repository.deleteById(id);
     }
