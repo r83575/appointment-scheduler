@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/rooms")
 @RequiredArgsConstructor
+@RequestMapping("/api/rooms")
 public class RoomController {
 
     private final RoomService service;

@@ -9,13 +9,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/doctor-specializations")
 @RequiredArgsConstructor
+@RequestMapping("/api/doctor-specializations")
 public class DoctorSpecializationController {
 
     private final DoctorSpecializationService service;
 
-    // GET ALL
     @GetMapping
     public List<DoctorSpecializationResponseDto> getAll() {
         return service.getAll();

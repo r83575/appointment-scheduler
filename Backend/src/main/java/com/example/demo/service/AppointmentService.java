@@ -6,11 +6,13 @@ import com.example.demo.mapper.AppointmentMapper;
 import com.example.demo.model.*;
 import com.example.demo.repository.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalTime;
 import java.util.List;
 
 @Service
+@Transactional
 public class AppointmentService {
 
     private final AppointmentRepository appointmentRepo;

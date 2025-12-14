@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/specializations")
 @RequiredArgsConstructor
+@RequestMapping("/api/specializations")
 public class SpecializationController {
 
     private final SpecializationService service;
