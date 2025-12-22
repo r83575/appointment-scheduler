@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.dto.customer.CustomerRequestDto;
 import com.example.demo.dto.customer.CustomerResponseDto;
+import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.mapper.CustomerMapper;
 import com.example.demo.model.Customer;
 import com.example.demo.repository.CustomerRepository;
@@ -25,7 +26,7 @@ public class CustomerService {
 
     public CustomerResponseDto getById(Long id) {
         Customer entity = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Customer not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
 
         return CustomerMapper.toDto(entity);
     }
@@ -38,7 +39,7 @@ public class CustomerService {
 
     public CustomerResponseDto update(Long id, CustomerRequestDto dto) {
         Customer existing = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Customer not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
 
         CustomerMapper.updateEntity(existing, dto);
 

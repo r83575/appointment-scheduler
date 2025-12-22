@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.dto.appointment.AppointmentRequestDto;
 import com.example.demo.dto.appointment.AppointmentResponseDto;
+import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.mapper.AppointmentMapper;
 import com.example.demo.model.*;
 import com.example.demo.repository.*;
@@ -38,16 +39,16 @@ public class AppointmentService {
     public AppointmentResponseDto create(AppointmentRequestDto dto) {
 
         Doctor doctor = doctorRepo.findById(dto.getDoctorId())
-                .orElseThrow(() -> new RuntimeException("Doctor not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor not found"));
 
         Customer customer = customerRepo.findById(dto.getCustomerId())
-                .orElseThrow(() -> new RuntimeException("Customer not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
 
         Room room = roomRepo.findById(dto.getRoomId())
-                .orElseThrow(() -> new RuntimeException("Room not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Room not found"));
 
         Specialization specialization = specializationRepo.findById(dto.getSpecializationId())
-                .orElseThrow(() -> new RuntimeException("Specialization not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Specialization not found"));
 
         int duration = specialization.getDefaultDuration();
         var calculatedEndTime = dto.getStartTime().plusMinutes(duration);
@@ -69,7 +70,7 @@ public class AppointmentService {
 
     public AppointmentResponseDto getById(Long id) {
         Appointment entity = appointmentRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Appointment not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Appointment not found"));
 
         return AppointmentMapper.toDto(entity);
     }
@@ -77,19 +78,19 @@ public class AppointmentService {
     public AppointmentResponseDto update(Long id, AppointmentRequestDto dto) {
 
         Appointment existing = appointmentRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Appointment not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Appointment not found"));
 
         Doctor doctor = doctorRepo.findById(dto.getDoctorId())
-                .orElseThrow(() -> new RuntimeException("Doctor not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor not found"));
 
         Customer customer = customerRepo.findById(dto.getCustomerId())
-                .orElseThrow(() -> new RuntimeException("Customer not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
 
         Room room = roomRepo.findById(dto.getRoomId())
-                .orElseThrow(() -> new RuntimeException("Room not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Room not found"));
 
         Specialization specialization = specializationRepo.findById(dto.getSpecializationId())
-                .orElseThrow(() -> new RuntimeException("Specialization not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Specialization not found"));
 
         existing.setDoctor(doctor);
         existing.setCustomer(customer);

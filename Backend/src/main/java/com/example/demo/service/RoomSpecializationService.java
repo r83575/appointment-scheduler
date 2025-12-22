@@ -2,6 +2,8 @@ package com.example.demo.service;
 
 import com.example.demo.dto.roomspecialization.RoomSpecializationRequestDto;
 import com.example.demo.dto.roomspecialization.RoomSpecializationResponseDto;
+import com.example.demo.exception.ConflictException;
+import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.mapper.RoomSpecializationMapper;
 import com.example.demo.model.RoomSpecialization;
 import com.example.demo.model.RoomSpecializationId;
@@ -29,7 +31,7 @@ public class RoomSpecializationService {
     public RoomSpecializationResponseDto getById(Long roomId, Long specializationId) {
         RoomSpecialization entity = repository
                 .findById(new RoomSpecializationId(roomId, specializationId))
-                .orElseThrow(() -> new RuntimeException("RoomSpecialization not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("RoomSpecialization not found"));
 
         return RoomSpecializationMapper.toDto(entity);
     }
@@ -43,7 +45,7 @@ public class RoomSpecializationService {
         );
 
         if (repository.existsById(id)) {
-            throw new RuntimeException("This RoomSpecialization already exists");
+            throw new ConflictException("This RoomSpecialization already exists");
         }
 
         RoomSpecialization saved = repository.save(entity);
