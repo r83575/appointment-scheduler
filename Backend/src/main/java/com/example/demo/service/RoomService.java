@@ -2,6 +2,8 @@ package com.example.demo.service;
 
 import com.example.demo.dto.room.RoomRequestDto;
 import com.example.demo.dto.room.RoomResponseDto;
+import com.example.demo.exception.ConflictException;
+import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.mapper.RoomMapper;
 import com.example.demo.model.Room;
 import com.example.demo.repository.RoomRepository;
@@ -25,7 +27,7 @@ public class RoomService {
 
     public RoomResponseDto getById(Long id) {
         Room entity = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Room not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Room not found"));
 
         return RoomMapper.toDto(entity);
     }
@@ -34,7 +36,7 @@ public class RoomService {
     public RoomResponseDto create(RoomRequestDto dto) {
 
         if (repository.existsByRoomNumber(dto.getRoomNumber())) {
-            throw new RuntimeException("Room number already exists");
+            throw new ConflictException("Room number already exists");
         }
 
         Room entity = RoomMapper.toEntity(dto);
@@ -50,14 +52,14 @@ public class RoomService {
 
                     if (existing.getRoomNumber() != dto.getRoomNumber() &&
                             repository.existsByRoomNumber(dto.getRoomNumber())) {
-                        throw new RuntimeException("Room number already exists");
+                        throw new ConflictException("Room number already exists");
                     }
 
                     RoomMapper.updateEntity(existing, dto);
                     Room updated = repository.save(existing);
                     return RoomMapper.toDto(updated);
                 })
-                .orElseThrow(() -> new RuntimeException("Room not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Room not found"));
     }
 
     @Transactional

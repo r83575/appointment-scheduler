@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.dto.availability.DoctorAvailabilityRequestDto;
 import com.example.demo.dto.availability.DoctorAvailabilityResponseDto;
+import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.mapper.DoctorAvailabilityMapper;
 import com.example.demo.model.DoctorAvailability;
 import com.example.demo.repository.DoctorAvailabilityRepository;
@@ -25,7 +26,7 @@ public class DoctorAvailabilityService {
 
     public DoctorAvailabilityResponseDto getById(Long id) {
         DoctorAvailability entity = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("DoctorAvailability not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("DoctorAvailability not found"));
 
         return DoctorAvailabilityMapper.toDto(entity);
     }
@@ -39,7 +40,7 @@ public class DoctorAvailabilityService {
 
     public DoctorAvailabilityResponseDto update(Long id, DoctorAvailabilityRequestDto dto) {
         DoctorAvailability existing = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("DoctorAvailability not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("DoctorAvailability not found"));
 
         DoctorAvailabilityMapper.updateEntity(existing, dto);
 

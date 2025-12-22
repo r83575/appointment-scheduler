@@ -1,6 +1,8 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.doctorspecialization.*;
+import com.example.demo.exception.ConflictException;
+import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.mapper.DoctorSpecializationMapper;
 import com.example.demo.model.DoctorSpecialization;
 import com.example.demo.model.DoctorSpecializationId;
@@ -29,7 +31,7 @@ public class DoctorSpecializationService {
         DoctorSpecializationId id = new DoctorSpecializationId(doctorId, specializationId);
 
         DoctorSpecialization entity = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("DoctorSpecialization not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("DoctorSpecialization not found"));
 
         return DoctorSpecializationMapper.toDto(entity);
     }
@@ -40,7 +42,7 @@ public class DoctorSpecializationService {
                 new DoctorSpecializationId(dto.getDoctorId(), dto.getSpecializationId());
 
         if (repository.existsById(id)) {
-            throw new RuntimeException("This doctor is already assigned to this specialization");
+            throw new ConflictException("This doctor is already assigned to this specialization");
         }
 
         DoctorSpecialization entity = DoctorSpecializationMapper.toEntity(dto);
@@ -55,13 +57,13 @@ public class DoctorSpecializationService {
         DoctorSpecializationId id = new DoctorSpecializationId(doctorId, specializationId);
 
         DoctorSpecialization existing = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("DoctorSpecialization not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("DoctorSpecialization not found"));
 
         DoctorSpecializationId newId =
                 new DoctorSpecializationId(dto.getDoctorId(), dto.getSpecializationId());
 
         if (!newId.equals(id) && repository.existsById(newId)) {
-            throw new RuntimeException("This doctor is already assigned to this specialization");
+            throw new ConflictException("This doctor is already assigned to this specialization");
         }
 
         DoctorSpecializationMapper.updateEntity(existing, dto);

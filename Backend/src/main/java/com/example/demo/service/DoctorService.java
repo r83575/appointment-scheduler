@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.dto.doctor.DoctorRequestDto;
 import com.example.demo.dto.doctor.DoctorResponseDto;
+import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.mapper.DoctorMapper;
 import com.example.demo.model.Doctor;
 import com.example.demo.repository.DoctorRepository;
@@ -9,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +26,7 @@ public class DoctorService {
 
     public DoctorResponseDto getById(Long id) {
         Doctor entity = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Doctor not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor not found"));
 
         return DoctorMapper.toDto(entity);
     }
@@ -39,7 +39,7 @@ public class DoctorService {
 
     public DoctorResponseDto update(Long id, DoctorRequestDto dto) {
         Doctor entity = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Doctor not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor not found"));
 
         entity.setFirstName(dto.getFirstName());
         entity.setLastName(dto.getLastName());

@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.dto.specialization.SpecializationRequestDto;
 import com.example.demo.dto.specialization.SpecializationResponseDto;
+import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.mapper.SpecializationMapper;
 import com.example.demo.model.Specialization;
 import com.example.demo.repository.SpecializationRepository;
@@ -25,7 +26,7 @@ public class SpecializationService {
 
     public SpecializationResponseDto getById(Long id) {
         Specialization entity = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Specialization not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Specialization not found"));
 
         return SpecializationMapper.toDto(entity);
     }
@@ -38,7 +39,7 @@ public class SpecializationService {
 
     public SpecializationResponseDto update(Long id, SpecializationRequestDto dto) {
         Specialization existing = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Specialization not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Specialization not found"));
 
         SpecializationMapper.updateEntity(existing, dto);
 
