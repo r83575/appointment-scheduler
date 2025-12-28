@@ -2,11 +2,11 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.appointment.AppointmentRequestDto;
 import com.example.demo.dto.appointment.AppointmentResponseDto;
+import com.example.demo.dto.page.PageResponseDto;
 import com.example.demo.service.AppointmentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -16,8 +16,8 @@ public class AppointmentController {
     private final AppointmentService service;
 
     @GetMapping
-    public List<AppointmentResponseDto> getAll() {
-        return service.getAll();
+    public PageResponseDto<AppointmentResponseDto> getAll(Pageable pageable) {
+        return service.getAll(pageable);
     }
 
     @GetMapping("/{id}")

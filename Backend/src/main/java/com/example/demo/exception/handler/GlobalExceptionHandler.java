@@ -5,15 +5,15 @@ import com.example.demo.exception.BadRequestException;
 import com.example.demo.exception.ConflictException;
 import com.example.demo.exception.ResourceNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.ConstraintViolationException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -21,6 +21,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponseDto> handleNotFound(
             ResourceNotFoundException ex,
             HttpServletRequest request) {
+
+        log.warn(
+                "404 Not Found: path={}, message={}",
+                request.getRequestURI(),
+                ex.getMessage()
+        );
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(new ErrorResponseDto(
@@ -37,6 +43,12 @@ public class GlobalExceptionHandler {
             ConflictException ex,
             HttpServletRequest request) {
 
+        log.warn(
+                "409 Conflict: path={}, message={}",
+                request.getRequestURI(),
+                ex.getMessage()
+        );
+
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(new ErrorResponseDto(
                         LocalDateTime.now(),
@@ -52,6 +64,12 @@ public class GlobalExceptionHandler {
             BadRequestException ex,
             HttpServletRequest request) {
 
+        log.warn(
+                "400 Bad Request: path={}, message={}",
+                request.getRequestURI(),
+                ex.getMessage()
+        );
+
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorResponseDto(
                         LocalDateTime.now(),
@@ -62,45 +80,23 @@ public class GlobalExceptionHandler {
                 ));
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponseDto> handleMethodArgumentNotValid(
-            MethodArgumentNotValidException ex,
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponseDto> handleUnexpected(
+            Exception ex,
             HttpServletRequest request) {
 
-        String message = ex.getBindingResult()
-                .getFieldErrors()
-                .stream()
-                .map(error -> error.getField() + ": " + error.getDefaultMessage())
-                .findFirst()
-                .orElse("Validation error");
+        log.error(
+                "500 Internal Server Error: path={}",
+                request.getRequestURI(),
+                ex
+        );
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ErrorResponseDto(
                         LocalDateTime.now(),
-                        HttpStatus.BAD_REQUEST.value(),
-                        HttpStatus.BAD_REQUEST.getReasonPhrase(),
-                        message,
-                        request.getRequestURI()
-                ));
-    }
-
-    @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ErrorResponseDto> handleConstraintViolation(
-            ConstraintViolationException ex,
-            HttpServletRequest request) {
-
-        String message = ex.getConstraintViolations()
-                .stream()
-                .map(v -> v.getMessage())
-                .findFirst()
-                .orElse("Constraint violation");
-
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ErrorResponseDto(
-                        LocalDateTime.now(),
-                        HttpStatus.BAD_REQUEST.value(),
-                        HttpStatus.BAD_REQUEST.getReasonPhrase(),
-                        message,
+                        HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                        HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
+                        "Unexpected error occurred",
                         request.getRequestURI()
                 ));
     }

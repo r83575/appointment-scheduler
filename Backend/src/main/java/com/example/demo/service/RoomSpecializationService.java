@@ -9,11 +9,13 @@ import com.example.demo.model.RoomSpecialization;
 import com.example.demo.model.RoomSpecializationId;
 import com.example.demo.repository.RoomSpecializationRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -29,14 +31,30 @@ public class RoomSpecializationService {
     }
 
     public RoomSpecializationResponseDto getById(Long roomId, Long specializationId) {
-        RoomSpecialization entity = repository
-                .findById(new RoomSpecializationId(roomId, specializationId))
-                .orElseThrow(() -> new ResourceNotFoundException("RoomSpecialization not found"));
+
+        RoomSpecializationId id = new RoomSpecializationId(roomId, specializationId);
+
+        RoomSpecialization entity = repository.findById(id)
+                .orElseThrow(() -> {
+                    log.warn(
+                            "RoomSpecialization not found: roomId={}, specializationId={}",
+                            roomId,
+                            specializationId
+                    );
+                    return new ResourceNotFoundException("RoomSpecialization not found");
+                });
 
         return RoomSpecializationMapper.toDto(entity);
     }
 
     public RoomSpecializationResponseDto create(RoomSpecializationRequestDto dto) {
+
+        log.info(
+                "Creating RoomSpecialization: roomId={}, specializationId={}",
+                dto.getRoomId(),
+                dto.getSpecializationId()
+        );
+
         RoomSpecialization entity = RoomSpecializationMapper.toEntity(dto);
 
         RoomSpecializationId id = new RoomSpecializationId(
@@ -45,14 +63,34 @@ public class RoomSpecializationService {
         );
 
         if (repository.existsById(id)) {
+            log.warn(
+                    "RoomSpecialization already exists: roomId={}, specializationId={}",
+                    entity.getRoom().getId(),
+                    entity.getSpecialization().getId()
+            );
             throw new ConflictException("This RoomSpecialization already exists");
         }
 
         RoomSpecialization saved = repository.save(entity);
+
+        log.info(
+                "RoomSpecialization created successfully: roomId={}, specializationId={}",
+                saved.getRoom().getId(),
+                saved.getSpecialization().getId()
+        );
+
         return RoomSpecializationMapper.toDto(saved);
     }
 
     public void delete(Long roomId, Long specializationId) {
-        repository.deleteById(new RoomSpecializationId(roomId, specializationId));
+
+        log.info(
+                "Deleting RoomSpecialization: roomId={}, specializationId={}",
+                roomId,
+                specializationId
+        );
+
+        RoomSpecializationId id = new RoomSpecializationId(roomId, specializationId);
+        repository.deleteById(id);
     }
 }
