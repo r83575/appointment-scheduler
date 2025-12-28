@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalTime;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -41,7 +42,6 @@ public class AppointmentService {
         this.specializationRepo = specializationRepo;
     }
 
-    // ===== Pagination =====
     public PageResponseDto<AppointmentResponseDto> getAll(Pageable pageable) {
 
         log.info(
@@ -65,7 +65,6 @@ public class AppointmentService {
         );
     }
 
-    // ===== CRUD =====
     public AppointmentResponseDto create(AppointmentRequestDto dto) {
 
         log.info(
