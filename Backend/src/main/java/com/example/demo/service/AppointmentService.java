@@ -2,16 +2,19 @@ package com.example.demo.service;
 
 import com.example.demo.dto.appointment.AppointmentRequestDto;
 import com.example.demo.dto.appointment.AppointmentResponseDto;
+import com.example.demo.dto.page.PageResponseDto;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.mapper.AppointmentMapper;
 import com.example.demo.model.*;
 import com.example.demo.repository.*;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalTime;
-import java.util.List;
 
 @Slf4j
 @Service
@@ -38,6 +41,31 @@ public class AppointmentService {
         this.specializationRepo = specializationRepo;
     }
 
+    // ===== Pagination =====
+    public PageResponseDto<AppointmentResponseDto> getAll(Pageable pageable) {
+
+        log.info(
+                "Fetching appointments page: page={}, size={}, sort={}",
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                pageable.getSort()
+        );
+
+        Page<Appointment> page = appointmentRepo.findAll(pageable);
+
+        return new PageResponseDto<>(
+                page.getContent()
+                        .stream()
+                        .map(AppointmentMapper::toDto)
+                        .toList(),
+                page.getNumber(),
+                page.getSize(),
+                page.getTotalElements(),
+                page.getTotalPages()
+        );
+    }
+
+    // ===== CRUD =====
     public AppointmentResponseDto create(AppointmentRequestDto dto) {
 
         log.info(
@@ -146,8 +174,7 @@ public class AppointmentService {
         existing.setStartTime(dto.getStartTime());
 
         int duration = specialization.getDefaultDuration();
-        LocalTime calculatedEndTime = dto.getStartTime().plusMinutes(duration);
-        existing.setEndTime(calculatedEndTime);
+        existing.setEndTime(dto.getStartTime().plusMinutes(duration));
 
         Appointment updated = appointmentRepo.save(existing);
 
