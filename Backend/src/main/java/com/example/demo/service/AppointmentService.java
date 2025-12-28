@@ -8,6 +8,7 @@ import com.example.demo.mapper.AppointmentMapper;
 import com.example.demo.model.*;
 import com.example.demo.repository.*;
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -112,6 +113,13 @@ public class AppointmentService {
         log.info("Appointment created successfully: appointmentId={}", saved.getId());
 
         return AppointmentMapper.toDto(saved);
+    }
+
+    public List<AppointmentResponseDto> getAll() {
+        return appointmentRepo.findAll()
+                .stream()
+                .map(AppointmentMapper::toDto)
+                .toList();
     }
 
     public AppointmentResponseDto getById(Long id) {
